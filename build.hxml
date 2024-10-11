@@ -1,0 +1,4 @@
+--class-path src
+--main Main
+--library haxe-unix-sockets
+--cpp bin/
