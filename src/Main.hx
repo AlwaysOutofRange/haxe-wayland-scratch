@@ -3,6 +3,8 @@ import unix.UnixSocket;
 import messages.GetRegistryMessage;
 import utils.HeaderLE;
 import utils.EventIterator;
+import utils.EventIterator.OpCode;
+import utils.EventIterator.ObjectID;
 import utils.BytesUtils;
 
 class Main {
@@ -30,18 +32,15 @@ class Main {
 
 		var it = new EventIterator(res.data.sub(0, res.len));
 		while (it.hasNext()) {
-			var e = it.next();
-
-			Sys.println("HeaderLE{id: " + e.header.id + ", op: " + e.header.op + ", size: " + e.header.size + "}, Registry: "
-				+ BytesUtils.bytesToString(e.data));
+			it.next();
 		}
 
 		socket.close();
 	}
 
 	static function getRegistry(socket:UnixSocket, new_id:Int):Void {
-		var msg = new GetRegistryMessage(new HeaderLE(1, // wayland_display_object_id
-			1, // wayland_wl_display_get_registry_opcode
+		var msg = new GetRegistryMessage(new HeaderLE(cast(ObjectID.WL_DISPLAY, Int), // wayland_display_object_id
+			cast(OpCode.GET_REGISTRY, Int), // wayland_wl_display_get_registry_opcode
 			Stdlib.sizeof(GetRegistryMessage)), new_id);
 
 		socket.writeBytes(msg.toBytes());
