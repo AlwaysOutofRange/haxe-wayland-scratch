@@ -6,7 +6,6 @@ import haxe.Exception;
 import messages.HeaderLE;
 import constants.ObjectID;
 import constants.OpCode;
-import utils.BytesUtils;
 
 class EventIterator {
 	var buffer:Bytes;
@@ -42,6 +41,9 @@ class EventIterator {
 
 		var objectID = this.castID(header.id);
 		var opcode = this.castOpcode(objectID, header.op);
+		if (opcode == UNKNOWN || objectID == UNKNOWN) {
+			throw new Exception("Unknown object ID: " + objectID + ", opcode: " + opcode);
+		}
 
 		this.dispatcher.dispatch(objectID, opcode, data);
 
@@ -68,7 +70,7 @@ class EventIterator {
 		return switch (id) {
 			case 1: ObjectID.WL_DISPLAY;
 			case 2: ObjectID.WL_REGISTRY;
-			default: throw new Exception("Unknown object ID: " + id);
+			default: ObjectID.UNKNOWN;
 		}
 	}
 
@@ -77,15 +79,14 @@ class EventIterator {
 			case ObjectID.WL_DISPLAY:
 				switch (opcode) {
 					case 0: OpCode.DISPLAY_ERROR;
-					default: throw new Exception("Unknown opcode for wl_display: " + opcode);
+					default: OpCode.UNKNOWN;
 				}
 			case ObjectID.WL_REGISTRY:
 				switch (opcode) {
 					case 0: OpCode.REGISTRY_GLOBAL;
-					default: throw new Exception("Unknown opcode for wl_registry: " + opcode);
+					default: OpCode.UNKNOWN;
 				}
-			default:
-				throw new Exception("Unknown object ID while casting opcode");
+			default: OpCode.UNKNOWN;
 		}
 	}
 }

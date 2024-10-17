@@ -2,7 +2,6 @@ package messages;
 
 import cpp.Stdlib;
 import haxe.io.Bytes;
-import utils.HeaderLE;
 
 class GetRegistryMessage extends WaylandMessage {
 	public var new_id:Int;

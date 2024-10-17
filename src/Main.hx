@@ -1,48 +1,44 @@
 import cpp.Stdlib;
 import unix.UnixSocket;
 import messages.GetRegistryMessage;
-import utils.HeaderLE;
-import utils.EventIterator;
-import utils.EventIterator.OpCode;
-import utils.EventIterator.ObjectID;
-import utils.BytesUtils;
+import messages.HeaderLE;
+import events.EventIterator;
+import events.handlers.DisplayErrorHandler;
+import events.handlers.RegistryGlobalHandler;
+import events.EventDispatcher;
+import constants.ObjectID;
+import constants.OpCode;
 
 class Main {
 	static public function main():Void {
-		var id = 2;
+		var env = new WaylandEnv();
+		var waylandSocket = new WaylandSocket(env.getSocketPath());
+		var dispatcher = setupEventDispatcher();
+		waylandSocket.connect();
 
-		var xdg_runtime_dir = Sys.getEnv("XDG_RUNTIME_DIR");
-		if (xdg_runtime_dir == null) {
-			trace("XDG_RUNTIME_DIR not set");
-			Sys.exit(-1);
-		}
+		getRegistry(waylandSocket);
+		var res = waylandSocket.read(4096);
 
-		var wayland_display = Sys.getEnv("WAYLAND_DISPLAY");
-		if (wayland_display == null) {
-			trace("WAYLAND_DISPLAY not set");
-			Sys.exit(-1);
-		}
-
-		var socket = new UnixSocket(xdg_runtime_dir + "/" + wayland_display);
-		socket.init();
-		socket.connect();
-
-		getRegistry(socket, id);
-		var res = socket.readBytes(4096);
-
-		var it = new EventIterator(res.data.sub(0, res.len));
+		var it = new EventIterator(res, dispatcher);
 		while (it.hasNext()) {
 			it.next();
 		}
 
-		socket.close();
+		waylandSocket.close();
 	}
 
-	static function getRegistry(socket:UnixSocket, new_id:Int):Void {
+	static function setupEventDispatcher():EventDispatcher {
+		var dispatcher = new EventDispatcher();
+		dispatcher.registerHandler(ObjectID.WL_DISPLAY, OpCode.DISPLAY_ERROR, new DisplayErrorHandler());
+		dispatcher.registerHandler(ObjectID.WL_REGISTRY, OpCode.REGISTRY_GLOBAL, new RegistryGlobalHandler());
+		return dispatcher;
+	}
+
+	static function getRegistry(socket:WaylandSocket):Void {
 		var msg = new GetRegistryMessage(new HeaderLE(cast(ObjectID.WL_DISPLAY, Int), // wayland_display_object_id
 			cast(OpCode.GET_REGISTRY, Int), // wayland_wl_display_get_registry_opcode
-			Stdlib.sizeof(GetRegistryMessage)), new_id);
+			Stdlib.sizeof(GetRegistryMessage)), socket.getCurrentId());
 
-		socket.writeBytes(msg.toBytes());
+		socket.write(msg.toBytes());
 	}
 }

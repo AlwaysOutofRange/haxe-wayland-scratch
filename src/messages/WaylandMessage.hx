@@ -1,7 +1,6 @@
 package messages;
 
 import haxe.Exception;
-import utils.HeaderLE;
 import haxe.io.Bytes;
 
 class WaylandMessage {
