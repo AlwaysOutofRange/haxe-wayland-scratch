@@ -5,7 +5,7 @@ import constants.OpCode;
 import haxe.io.Bytes;
 
 class EventDispatcher {
-	private var handlers:Map<ObjectID, Map<OpCode, EventHandler>>;
+	var handlers:Map<ObjectID, Map<OpCode, EventHandler>>;
 
 	public function new() {
 		this.handlers = new Map();
@@ -28,10 +28,10 @@ class EventDispatcher {
 			if (handler != null) {
 				handler.handle(data);
 			} else {
-				trace("No handler for objectID = " + objectID + ", opcode = " + opcode);
+				Sys.println("INFO: No handler for objectID = " + objectID + ", opcode = " + opcode);
 			}
 		} else {
-			trace("No handler for objectID = " + objectID);
+			Sys.println("INFO: No handler for objectID = " + objectID);
 		}
 	}
 }

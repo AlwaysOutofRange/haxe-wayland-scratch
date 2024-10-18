@@ -5,7 +5,6 @@ import constants.ObjectID;
 import constants.OpCode;
 import messages.BindMessage;
 import messages.HeaderLE;
-import WaylandSocket;
 
 class Object {
 	var socket:WaylandSocket;
@@ -15,10 +14,10 @@ class Object {
 		this.socket = socket;
 	}
 
-	public function bind(globalId:Int, interface_:String, version:Int, newId:Int):Void {
+	public function bind(name:Int, interface_:String, version:Int):Void {
 		var msg = new BindMessage(new HeaderLE(cast(ObjectID.WL_REGISTRY, Int), // wayland_wl_registry_object_id
 			cast(OpCode.BIND, Int), // wayland_wl_object_bind_opcode
-			Stdlib.sizeof(BindMessage)), globalId, interface_, version, newId);
+			Stdlib.sizeof(BindMessage)), name, interface_, version);
 
 		socket.write(msg.toBytes());
 	}

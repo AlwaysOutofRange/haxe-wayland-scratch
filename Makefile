@@ -10,6 +10,9 @@ build:
 run:
 	$(TARGET)/Main
 
+lint:
+	haxelib run checkstyle -s src
+
 clean:
 	rm -f $(TARGET)
 

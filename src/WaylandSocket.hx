@@ -1,12 +1,9 @@
 import unix.UnixSocket;
 import haxe.io.Bytes;
 
-class WaylandState {}
-
 class WaylandSocket {
-	private var socket:UnixSocket;
-
-	private var current_id:Int = 1;
+	var socket:UnixSocket;
+	var current_id:Int = 1;
 
 	public function new(socketPath:String) {
 		socket = new UnixSocket(socketPath);

@@ -8,7 +8,7 @@ class BytesUtils {
 	 *
 	 * @param bytes The bytes object to convert.
 	 * @return A string representation of the bytes object.
-	 */
+	**/
 	public static function bytesToString(bytes:Bytes):String {
 		// Filter out all bytes that are not printable ASCII characters
 		// (i.e. bytes >= 32 and <= 126, excluding "/")

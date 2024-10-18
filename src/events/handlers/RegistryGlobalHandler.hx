@@ -18,7 +18,7 @@ class RegistryGlobalHandler implements EventHandler {
 		switch (interface_name) {
 			case "wl_compositor":
 				var compositor = new objects.WlCompositor(this.socket, this.socket.getCurrentId());
-				compositor.bind(name, interface_name, version, this.socket.allocateId());
+				compositor.bind(name, interface_name, version);
 			default:
 				Sys.println("Registry: name = " + name + ", interface = " + interface_name + ", version = " + version);
 		}

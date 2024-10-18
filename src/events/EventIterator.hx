@@ -58,7 +58,7 @@ class EventIterator {
 		this.buffer = buffer;
 	}
 
-	private function consume(len:Int):Void {
+	function consume(len:Int):Void {
 		if (this.buffer.length == len) {
 			this.buffer = Bytes.alloc(0);
 		} else {
@@ -66,7 +66,7 @@ class EventIterator {
 		}
 	}
 
-	private function castID(id:Int):ObjectID {
+	function castID(id:Int):ObjectID {
 		return switch (id) {
 			case 1: ObjectID.WL_DISPLAY;
 			case 2: ObjectID.WL_REGISTRY;
@@ -74,7 +74,7 @@ class EventIterator {
 		}
 	}
 
-	private function castOpcode(objectID:ObjectID, opcode:Int):OpCode {
+	function castOpcode(objectID:ObjectID, opcode:Int):OpCode {
 		return switch (objectID) {
 			case ObjectID.WL_DISPLAY:
 				switch (opcode) {

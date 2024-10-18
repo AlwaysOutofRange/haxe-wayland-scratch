@@ -1,5 +1,4 @@
 import cpp.Stdlib;
-import unix.UnixSocket;
 import messages.GetRegistryMessage;
 import messages.HeaderLE;
 import events.EventIterator;
@@ -9,6 +8,9 @@ import events.EventDispatcher;
 import constants.ObjectID;
 import constants.OpCode;
 
+/**
+ * @link https://wayland.app/protocols/wayland
+**/
 class Main {
 	static public function main():Void {
 		var env = new WaylandEnv();
