@@ -12,6 +12,7 @@ class Object {
 
 	public function new(socket:WaylandSocket, id:Int) {
 		this.socket = socket;
+		this.id = id;
 	}
 
 	public function bind(name:Int, interface_:String, version:Int):Void {
@@ -20,5 +21,9 @@ class Object {
 			Stdlib.sizeof(BindMessage)), name, interface_, version);
 
 		socket.write(msg.toBytes());
+	}
+
+	public function getId():Int {
+		return this.id;
 	}
 }

@@ -20,14 +20,23 @@ class Main {
 
 		getRegistry(waylandSocket);
 
+		var commited = false;
+		var res = waylandSocket.read(4096);
+		var it = new EventIterator(res, dispatcher);
+
 		while (true) {
-			var res = waylandSocket.read(4096);
-			var it = new EventIterator(res, dispatcher);
 			while (it.hasNext()) {
 				it.next();
 			}
-		}
 
+			if (waylandSocket.interface_objects.surface != null && !commited) {
+				waylandSocket.interface_objects.surface.attach(0, 0);
+				waylandSocket.interface_objects.surface.damage(0, 0, 600, 800);
+				waylandSocket.interface_objects.xdg_toplevel.setTitle("Haxe");
+				waylandSocket.interface_objects.surface.commit();
+				commited = true;
+			}
+		}
 		waylandSocket.close();
 	}
 
@@ -39,10 +48,12 @@ class Main {
 	}
 
 	static function getRegistry(socket:WaylandSocket):Void {
+		var registry_id = socket.allocateId();
 		var msg = new GetRegistryMessage(new HeaderLE(cast(ObjectID.WL_DISPLAY, Int), // wayland_display_object_id
 			cast(OpCode.GET_REGISTRY, Int), // wayland_wl_display_get_registry_opcode
-			Stdlib.sizeof(GetRegistryMessage)), socket.allocateId());
+			Stdlib.sizeof(GetRegistryMessage)), registry_id);
 
+		socket.interface_ids.registry = registry_id;
 		socket.write(msg.toBytes());
 	}
 }

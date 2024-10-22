@@ -12,5 +12,6 @@ class DisplayErrorHandler implements EventHandler {
 		var message = BytesUtils.bytesToString(data.sub(6, data.length - 6));
 
 		Sys.println("Display error: object_id = " + object_id + ", code = " + code + ", message = " + message);
+		Sys.exit(-1);
 	}
 }
